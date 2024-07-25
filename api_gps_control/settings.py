@@ -140,10 +140,12 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'
 }
 
+CORS_ALLOWED_ORIGINS = []
+URL_FRONT = os.environ.get('URL_FRONT')
+
+if URL_FRONT:
+    CORS_ALLOWED_ORIGINS.append(URL_FRONT)
 # CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOWED_ORIGINS = [
-    "https://gpscontrol.vercel.app/",
-]
 
 CORS_ALLOW_METHODS = [
     "DELETE",
