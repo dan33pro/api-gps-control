@@ -1,0 +1,22 @@
+databases:
+  - name: api_gps_controldb
+    plan: free
+    databaseName: api_gps_control
+    user: api_gps_control
+
+services:
+  - type: web
+    plan: free
+    name: api_gps_control
+    runtime: python
+    buildCommand: "./build.sh"
+    startCommand: "python -m gunicorn api_gps_control.asgi:application -k uvicorn.workers.UvicornWorker"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: api_gps_controldb
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: WEB_CONCURRENCY
+        value: 4
