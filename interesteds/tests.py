@@ -3,6 +3,7 @@ from rest_framework.test import APITestCase
 from django.urls import reverse
 from .models import Interested
 
+
 class InterestedTests(APITestCase):
 
     def setUp(self):
@@ -13,7 +14,8 @@ class InterestedTests(APITestCase):
         }
         self.interested = Interested.objects.create(**self.interested_data)
         self.list_create_url = reverse('interested-list-create')
-        self.detail_url = reverse('interested-detail', kwargs={'pk': self.interested.pk})
+        self.detail_url = reverse(
+            'interested-detail', kwargs={'pk': self.interested.pk})
 
     def test_get_interesteds(self):
         response = self.client.get(self.list_create_url)
@@ -46,7 +48,8 @@ class InterestedTests(APITestCase):
         response = self.client.put(self.detail_url, updated_interested_data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.interested.refresh_from_db()
-        self.assertEqual(self.interested.brand, updated_interested_data['brand'])
+        self.assertEqual(self.interested.brand,
+                         updated_interested_data['brand'])
 
     def test_partial_update_interested(self):
         updated_interested_data = {
@@ -55,9 +58,21 @@ class InterestedTests(APITestCase):
         response = self.client.patch(self.detail_url, updated_interested_data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.interested.refresh_from_db()
-        self.assertEqual(self.interested.brand, updated_interested_data['brand'])
+        self.assertEqual(self.interested.brand,
+                         updated_interested_data['brand'])
 
     def test_delete_interested(self):
         response = self.client.delete(self.detail_url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Interested.objects.count(), 0)
+
+    def test_get_interesteds_ordered_by_id(self):
+        interested2 = Interested.objects.create(
+            brand="Brand B", branch="Branch B", applicant="Applicant B")
+        response = self.client.get(self.list_create_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual(
+            response.data[0]['id_interested'], self.interested.id_interested)
+        self.assertEqual(
+            response.data[1]['id_interested'], interested2.id_interested)
