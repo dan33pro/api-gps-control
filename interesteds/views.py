@@ -21,7 +21,7 @@ from drf_spectacular.utils import extend_schema
 @permission_classes([AllowAny])
 def interested_list_create(request):
     if request.method == 'GET':
-        interesteds = Interested.objects.all()
+        interesteds = Interested.objects.all().order_by('id_interested')
         serializer = InterestedSerializer(interesteds, many=True)
         return Response(serializer.data)
 
