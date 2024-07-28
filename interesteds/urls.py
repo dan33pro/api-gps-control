@@ -3,8 +3,9 @@ from rest_framework import routers
 from interesteds import views
 
 router = routers.DefaultRouter()
-router.register(r'interesteds', views.InterestedViewSet)
 
 urlpatterns = [
-    path('', include(router.urls))
+    path('', include(router.urls)),
+    path('interesteds/', views.interested_list_create, name='interested-list-create'),
+    path('interesteds/<int:pk>/', views.interested_detail, name='interested-detail'),
 ]
